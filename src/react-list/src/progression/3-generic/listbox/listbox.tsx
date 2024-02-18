@@ -13,6 +13,7 @@ import { mergeRefs } from '../merge-refs';
  * - Add support for single select.
  * - Add support for custom keyboard events on options. For example, Delete/Backspace to remove an
  * item from a list. We could add this behavior to the chips, for example.
+ * - Implement anything missing from https://www.w3.org/WAI/ARIA/apg/patterns/listbox/
  *
  * Possible improvements:
  * - Support vertical orientations with Up and Down arrow keys.
