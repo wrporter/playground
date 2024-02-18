@@ -1,30 +1,34 @@
-# React + TypeScript + Vite
+# React List
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Adapted from the Close interview at https://jsfiddle.net/mladylukas/9qmusLok/.
 
-Currently, two official plugins are available:
+## Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Implement a feature to allow item selection with the following requirements:
 
-## Expanding the ESLint configuration
+1. Clicking an item selects/unselects it.
+2. Multiple items can be selected at a time.
+3. Make sure to avoid unnecessary re-renders of each list item in the big list (performance).
+4. Currently selected items should be visually highlighted.
+5. Currently selected items' names should be shown at the top of the page.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Feel free to change the component structure at will.
 
-- Configure the top-level `parserOptions` property like this:
+## Solution
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+I've included multiple solutions, each building on the last. Note that I did not use the original CSS that was provided because I preferred to use Tailwind and opted for a more accessible design for color blindness with hover, press, and focus states.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- [0-simple](src/progression/0-simple.tsx): does the bare minimum to meet the requirements.
+- [1-memoized](src/progression/1-memoized.tsx): splits out the options and memoizes them to prevent re-renders.
+- [2-accessible](src/progression/2-accessible.tsx): adds accessibility for keyboard and screen reader users.
+- [3-generic](src/progression/3-generic/3-generic.tsx): provides a generic, unstyled listbox component.
+
+## Demo
+
+![Demo](demo.gif)
+
+## Usage
+
+1. Run `npm install`.
+2. Run `npm run dev`.
+3. Visit http://localhost:5173/.
