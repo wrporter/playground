@@ -97,7 +97,7 @@ export const InternalListbox = forwardRef<HTMLUListElement, PropsWithChildren>(
                 role="listbox"
                 tabIndex={0}
                 aria-multiselectable
-                aria-activedescendant={activeIndex.toString()}
+                aria-activedescendant={activeIndex >= 0 ? activeIndex.toString() : undefined}
                 onKeyDown={handleKeyDown}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleLeave}

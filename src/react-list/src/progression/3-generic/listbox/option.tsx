@@ -7,7 +7,7 @@ import { scrollIntoViewIfNeeded } from '../scroll';
 
 export interface OptionProps extends Omit<LiHTMLAttributes<HTMLLIElement>, 'className'> {
     index: number;
-    className: (props: { isActive: boolean; isSelected: boolean }) => string;
+    className?: (props: { isActive: boolean; isSelected: boolean }) => string;
 }
 
 /**
@@ -34,14 +34,16 @@ export const Option = forwardRef<HTMLLIElement, OptionProps>(
         }, [isActive]);
 
         return (
+            // Key events are handled via the parent listbox element.
             // eslint-disable-next-line jsx-a11y/click-events-have-key-events
             <li
                 ref={mergeRefs([externalRef, ref])}
                 role="option"
+                id={index.toString()}
                 aria-selected={selected.has(index)}
                 onClick={handleChange}
                 onMouseEnter={handleMouseEnter}
-                className={className({
+                className={className?.({
                     isActive,
                     isSelected,
                 })}
