@@ -35,7 +35,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v3
-        working-directory: ./react-list
         with:
           node-version: 18
           cache: 'npm'
@@ -52,7 +51,6 @@ jobs:
         working-directory: ./react-list
         uses: actions/upload-pages-artifact@v2
         with:
-          # Upload dist repository
           path: './dist'
       - name: Deploy to GitHub Pages
         working-directory: ./react-list
