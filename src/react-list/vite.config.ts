@@ -6,6 +6,7 @@ export default defineConfig({
     build: {
         minify: process.env.NODE_ENV === 'production',
     },
+    base: '/playground/',
     test: {
         globals: true,
         environment: 'happy-dom',
