@@ -52,13 +52,17 @@ jobs:
         working-directory: ./src/react-list
         run: npm run build
 
+      - name: Build
+        working-directory: ./src/react-list
+        run: mkdir -p static-site/react-list && mv static-site/* build/react-list
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './src/react-list/dist'
+          path: './src/react-list/static-site'
 
       - name: Deploy to GitHub Pages
         id: deployment
