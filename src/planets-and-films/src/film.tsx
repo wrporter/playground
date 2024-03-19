@@ -25,6 +25,7 @@ export function Film({ url }: { url: string }) {
     const [film, setFilm] = useState(cache[url]);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch(url)
             .then((response) => {
                 if (response.status >= 400) {

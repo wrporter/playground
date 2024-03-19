@@ -51,6 +51,7 @@ export function App() {
     const [previous, setPrevious] = useState<string | null>(null);
 
     useEffect(() => {
+        setIsLoading(true);
         fetch(page)
             .then((response) => {
                 if (response.status >= 400) {
@@ -71,13 +72,13 @@ export function App() {
     }, [page]);
 
     const handlePrevious = () => {
-        if (previous) {
+        if (previous && !isLoading) {
             setPage(previous);
             setPageNum(pageNum - 1);
         }
     };
     const handleNext = () => {
-        if (next) {
+        if (next && !isLoading) {
             setPage(next);
             setPageNum(pageNum + 1);
         }
