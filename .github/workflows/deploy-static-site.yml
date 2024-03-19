@@ -43,17 +43,33 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./src/react-list/package-lock.json
 
-      - name: Install dependencies
+      - name: Install dependencies (react-list)
         working-directory: ./src/react-list
         run: npm install
 
-      - name: Build
+      - name: Install dependencies (planets-and-films)
+        working-directory: ./src/planets-and-films
+        run: npm install
+
+      - name: Build (react-list)
         working-directory: ./src/react-list
         run: npm run build
 
-      - name: Build
+      - name: Build (planets-and-films)
+        working-directory: ./src/planets-and-films
+        run: npm run build
+
+      - name: Prepare Site (react-list)
         working-directory: ./src/react-list
         run: mkdir -p static-site/react-list && mv dist/* static-site/react-list
+
+      - name: Prepare Site (planets-and-films)
+        working-directory: ./src/planets-and-films
+        run: mkdir -p static-site/planets-and-films && mv dist/* static-site/planets-and-films
+
+      - name: Combine Site Files
+        working-directory: ./src
+        run: mkdir static-site && mv react-list/static-site static-site/react-list && mv planets-and-films/static-site static-site/planets-and-films
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -62,53 +78,6 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           path: './src/react-list/static-site'
-
-  planets-and-films:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./src/planets-and-films
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: ./src/planets-and-films/package-lock.json
-
-      - name: Install dependencies
-        working-directory: ./src/planets-and-films
-        run: npm install
-
-      - name: Build
-        working-directory: ./src/planets-and-films
-        run: npm run build
-
-      - name: Build
-        working-directory: ./src/planets-and-films
-        run: mkdir -p static-site/planets-and-films && mv dist/* static-site/planets-and-films
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: './src/planets-and-films/static-site'
-
-  deploy:
-    needs: [react-list, planets-and-films]
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
