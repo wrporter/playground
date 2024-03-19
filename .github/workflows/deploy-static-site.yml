@@ -24,14 +24,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checkout:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
   react-list:
-    needs: checkout
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -40,6 +33,9 @@ jobs:
       run:
         working-directory: ./src/react-list
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -68,7 +64,6 @@ jobs:
           path: './src/react-list/static-site'
 
   planets-and-films:
-    needs: checkout
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -77,6 +72,9 @@ jobs:
       run:
         working-directory: ./src/planets-and-films
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
