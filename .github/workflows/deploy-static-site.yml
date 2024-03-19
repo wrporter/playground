@@ -24,8 +24,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  react-list:
+    needs: checkout
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -34,9 +40,6 @@ jobs:
       run:
         working-directory: ./src/react-list
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -64,6 +67,50 @@ jobs:
         with:
           path: './src/react-list/static-site'
 
+  planets-and-films:
+    needs: checkout
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./src/planets-and-films
+    steps:
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: ./src/planets-and-films/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./src/planets-and-films
+        run: npm install
+
+      - name: Build
+        working-directory: ./src/planets-and-films
+        run: npm run build
+
+      - name: Build
+        working-directory: ./src/planets-and-films
+        run: mkdir -p static-site/planets-and-films && mv dist/* static-site/planets-and-films
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: './src/planets-and-films/static-site'
+
+  deploy:
+    needs: [react-list, planets-and-films]
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
