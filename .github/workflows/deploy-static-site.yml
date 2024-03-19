@@ -61,7 +61,7 @@ jobs:
 
       - name: Combine Site Files
         working-directory: ./src
-        run: mkdir static-site && mv react-list/dist/* static-site/react-list && mv planets-and-films/dist/* static-site/planets-and-films
+        run: mkdir -p static-site/react-list static-site/planets-and-films && mv react-list/dist/* static-site/react-list && mv planets-and-films/dist/* static-site/planets-and-films
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
