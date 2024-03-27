@@ -65,10 +65,10 @@ export function App() {
                             setNext(data.next);
                             setPrevious(data.previous);
                         })
-                        .catch((error) => setError(error));
+                        .catch(setError);
                 }
             })
-            .catch((error) => setError(error));
+            .catch(setError);
     }, [page]);
 
     const handlePrevious = () => {
