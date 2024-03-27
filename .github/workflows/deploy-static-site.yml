@@ -8,6 +8,8 @@ on:
     paths:
       - '.github/workflows/deploy-static-site.yml'
       - 'src/react-list/**'
+      - 'src/planets-and-films/**'
+      - 'src/battleship/**'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -51,6 +53,10 @@ jobs:
         working-directory: ./src/planets-and-films
         run: npm install
 
+      - name: Install dependencies (battleship)
+        working-directory: ./src/battleship
+        run: npm install
+
       - name: Build (react-list)
         working-directory: ./src/react-list
         run: npm run build
@@ -59,12 +65,17 @@ jobs:
         working-directory: ./src/planets-and-films
         run: npm run build
 
+      - name: Build (battleship)
+        working-directory: ./src/battleship
+        run: npm run build
+
       - name: Combine Site Files
         working-directory: ./src
         run: |
-          mkdir -p static-site/react-list static-site/planets-and-films
+          mkdir -p static-site/react-list static-site/planets-and-films static-site/battleship
           mv react-list/dist/* static-site/react-list
           mv planets-and-films/dist/* static-site/planets-and-films
+          mv battleship/dist/* static-site/battleship
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

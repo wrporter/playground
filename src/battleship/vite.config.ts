@@ -6,7 +6,7 @@ export default defineConfig({
     build: {
         minify: process.env.NODE_ENV === 'production',
     },
-    base: '/playground/planets-and-films/',
+    base: '/playground/battleship/',
     test: {
         globals: true,
         environment: 'happy-dom',
