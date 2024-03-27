@@ -16,12 +16,12 @@ export function Game() {
     return (
         <div className="flex flex-col m-4 space-y-4">
             {game.win ? (
-                <div className="text-green-700">Player {(game.turn + 1) % 2} wins!</div>
+                <div className="text-green-700">Player {game.getOpponentId()} wins!</div>
             ) : null}
 
             <div className="flex space-x-4">
-                <PlayerDisplay game={game} player={0} onUpdate={() => setRender((v) => !v)} />
-                <PlayerDisplay game={game} player={1} onUpdate={() => setRender((v) => !v)} />
+                <PlayerDisplay game={game} playerId={0} onUpdate={() => setRender((v) => !v)} />
+                <PlayerDisplay game={game} playerId={1} onUpdate={() => setRender((v) => !v)} />
             </div>
         </div>
     );

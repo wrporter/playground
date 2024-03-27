@@ -47,7 +47,11 @@ export class Battleship {
      * Takes a user's turn with the guessed position.
      */
     takeTurn(position: Point) {
-        const opponent = this.players[(this.turn + 1) % 2];
+        if (this.win) {
+            return;
+        }
+
+        const opponent = this.getOpponent();
 
         let hit = false;
         for (let i = 0; i < opponent.ships.length; i += 1) {
@@ -67,19 +71,23 @@ export class Battleship {
         this.players[this.turn].guesses.push({ ...position, hit });
 
         // Switch turns
-        this.turn = (this.turn + 1) % 2;
+        this.turn = this.getOpponentId();
 
         // Determine winning state
         this.win = opponent.ships.every((ship) => ship.positions.every((position) => position.hit));
+    }
+
+    getOpponentId() {
+        return (this.turn + 1) % 2;
+    }
+
+    getOpponent() {
+        return this.players[this.getOpponentId()];
     }
 }
 
 export const GRID_SIZE = 10;
 
 export function createGrid() {
-    const grid = [];
-    for (let row = 0; row < GRID_SIZE; row += 1) {
-        grid.push(Array.apply(null, Array(GRID_SIZE)));
-    }
-    return grid;
+    return Array.from(Array(GRID_SIZE), () => new Array(GRID_SIZE).fill(0));
 }
