@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
-import { createGrid } from './game-state';
 import type { Battleship } from './game-state';
+import { getId } from './game-state';
 
 export interface BoardProps {
     game: Battleship;
@@ -35,6 +34,7 @@ const positionVariants = tv({
             water: 'bg-blue-400',
             ship: 'bg-gray-400',
             hit: 'bg-red-400',
+            sunk: 'bg-red-700',
             miss: 'bg-gray-100',
         },
     },
@@ -52,92 +52,112 @@ const guessVariants = tv({
 type PositionVariants = VariantProps<typeof positionVariants>;
 
 export function PlayerDisplay({ game, playerId, onUpdate }: BoardProps) {
-    // TODO: Move memory to grids rather than finding locations to simplify logic.
-    const [grid] = useState(createGrid());
-    const [guesses] = useState(createGrid());
     const disabled = game.win || game.turn !== playerId;
 
     const { guessBoard, guessButton } = playerVariants({ disabled });
 
+    const guessRows = [];
+    for (let row = 0; row < game.size; row += 1) {
+        const cols = [];
+
+        for (let col = 0; col < game.size; col += 1) {
+            const positionId = getId(row, col, game.size);
+            const guess = game.players[playerId].guesses[positionId];
+
+            if (guess) {
+                const opponent = game.players[(playerId + 1) % 2];
+                const sunkShip = opponent.ships.find(
+                    (ship) => ship.positions[positionId] && ship.sunk,
+                );
+
+                let type: PositionVariants['type'] = 'miss';
+                if (sunkShip) {
+                    type = 'sunk';
+                } else if (guess.hit) {
+                    type = 'hit';
+                }
+
+                cols.push(
+                    <div
+                        key={col}
+                        className={guessVariants({
+                            type,
+                        })}
+                    />,
+                );
+            } else {
+                cols.push(
+                    <button
+                        key={col}
+                        className={guessButton()}
+                        type="button"
+                        onClick={() => {
+                            game.takeTurn({ row, col });
+                            onUpdate();
+                        }}
+                        aria-label="Select position to fire!"
+                    />,
+                );
+            }
+        }
+
+        guessRows.push(
+            <div key={row} className="flex">
+                {cols}
+            </div>,
+        );
+    }
+
+    const shipRows = [];
+    for (let row = 0; row < game.size; row += 1) {
+        const cols = [];
+
+        for (let col = 0; col < game.size; col += 1) {
+            const positionId = getId(row, col, game.size);
+            const ship = game.players[playerId].ships.find((ship) => ship.positions[positionId]);
+            const shipPosition = ship?.positions[positionId];
+
+            let type: PositionVariants['type'] = 'water';
+            if (shipPosition) {
+                if (ship?.sunk) {
+                    type = 'sunk';
+                } else if (shipPosition.hit) {
+                    type = 'hit';
+                } else {
+                    type = 'ship';
+                }
+            } else if (game.players[(playerId + 1) % 2].guesses[positionId]) {
+                type = 'miss';
+            }
+
+            cols.push(<div key={col} className={positionVariants({ type })} />);
+        }
+
+        shipRows.push(
+            <div key={row} className="flex">
+                {cols}
+            </div>,
+        );
+    }
+
     return (
         <div className="flex flex-col space-y-2">
-            <div className="flex">
-                Player: {playerId}
-                {game.turn === playerId ? (
-                    <div className="text-blue-600 ml-2">(Te toca!)</div>
-                ) : null}
+            <div className="flex justify-between">
+                <div className="flex">
+                    Player: {playerId}
+                    {game.turn === playerId && !game.win ? (
+                        <div className="text-blue-600 ml-2">(Te toca!)</div>
+                    ) : null}
+                </div>
+
+                <div>Score: {game.players[playerId].score}</div>
             </div>
 
             <fieldset className={guessBoard()} disabled={disabled}>
-                {guesses.map((row, y) => {
-                    return (
-                        <div className="flex">
-                            {row.map((_, x) => {
-                                const guess = game.players[playerId].guesses.find(
-                                    (guess) => guess.row === y && guess.col === x,
-                                );
-                                if (guess) {
-                                    return (
-                                        <div
-                                            className={guessVariants({
-                                                type: guess.hit ? 'hit' : 'miss',
-                                            })}
-                                        />
-                                    );
-                                }
-
-                                return (
-                                    <button
-                                        className={guessButton()}
-                                        type="button"
-                                        onClick={() => {
-                                            game.takeTurn({ row: y, col: x });
-                                            onUpdate();
-                                        }}
-                                        aria-label="Select position to fire!"
-                                    />
-                                );
-                            })}
-                        </div>
-                    );
-                })}
+                {guessRows}
             </fieldset>
 
-            <div className="flex flex-col border-4 border-amber-800">
-                {grid.map((row, y) => {
-                    return (
-                        <div className="flex">
-                            {row.map((_, x) => {
-                                const ship = game.players[playerId].ships.find((ship) =>
-                                    ship.positions.find(
-                                        (position) => position.row === y && position.col === x,
-                                    ),
-                                );
-                                const shipPosition = ship?.positions.find(
-                                    (position) => position.row === y && position.col === x,
-                                );
-
-                                let type: PositionVariants['type'] = 'water';
-                                if (shipPosition) {
-                                    if (shipPosition.hit) {
-                                        type = 'hit';
-                                    } else {
-                                        type = 'ship';
-                                    }
-                                } else if (
-                                    game.players[(playerId + 1) % 2].guesses.some(
-                                        (guess) => guess.row === y && guess.col === x,
-                                    )
-                                ) {
-                                    type = 'miss';
-                                }
-
-                                return <div className={positionVariants({ type })} />;
-                            })}
-                        </div>
-                    );
-                })}
-            </div>
+            <div className="flex flex-col border-4 border-amber-800">{shipRows}</div>
         </div>
     );
 }
