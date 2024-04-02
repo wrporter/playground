@@ -17,7 +17,7 @@ export interface FilmData {
     url: string;
 }
 
-const cache: Record<string, FilmData> = {};
+const cache: Record<string, Promise<FilmData>> = {};
 
 export function Film({ url }: { url: string }) {
     const [isLoading, setIsLoading] = useState(!cache[url]);
@@ -27,22 +27,29 @@ export function Film({ url }: { url: string }) {
     useEffect(() => {
         if (!cache[url]) {
             setIsLoading(true);
-            fetch(url)
+            cache[url] = fetch(url)
                 .then((response) => {
                     if (response.status >= 400) {
                         setError(new Error(`Failed with status ${response.status}`));
-                    } else {
-                        response
-                            .json()
-                            .then((data) => {
-                                cache[url] = data;
-                                setIsLoading(false);
-                                setFilm(data);
-                            })
-                            .catch(setError);
+                        delete cache[url];
+                        return undefined;
                     }
+                    return response
+                        .json()
+                        .then((data) => {
+                            cache[url] = Promise.resolve(data);
+                            setIsLoading(false);
+                            setFilm(data);
+                            return data;
+                        })
+                        .catch(setError);
                 })
                 .catch(setError);
+        } else {
+            cache[url].then((data) => {
+                setFilm(data);
+                setIsLoading(false);
+            });
         }
     }, []);
 
