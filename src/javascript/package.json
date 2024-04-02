@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@types/node": "20.12.2",
     "@wesp-up/eslint-config": "^1.0.1",
     "@wesp-up/tsconfig": "^1.0.0",
     "eslint": "8.57.0",

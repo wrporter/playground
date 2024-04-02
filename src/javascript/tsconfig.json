@@ -4,6 +4,6 @@
   "exclude": ["**/build", "coverage"],
   "compilerOptions": {
     "types": ["vitest/globals"],
-    "lib": ["DOM"]
+    "lib": ["DOM", "ESNext"]
   }
 }

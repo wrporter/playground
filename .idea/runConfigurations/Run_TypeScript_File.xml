@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run TypeScript File" type="NodeJSConfigurationType" node-parameters="--import tsx" path-to-js-file="$FilePath$" working-dir="$PROJECT_DIR$/src/javascript">
+    <method v="2" />
+  </configuration>
+</component>
