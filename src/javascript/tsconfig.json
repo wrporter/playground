@@ -1,0 +1,7 @@
+{
+  "extends": "@wesp-up/tsconfig/node.json",
+  "include": ["**/*", ".*"],
+  "compilerOptions": {
+    "lib": ["DOM"]
+  }
+}

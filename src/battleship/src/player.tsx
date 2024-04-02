@@ -95,7 +95,7 @@ export function PlayerDisplay({ game, playerId, onUpdate }: BoardProps) {
                             game.takeTurn({ row, col });
                             onUpdate();
                         }}
-                        aria-label="Select position to fire!"
+                        aria-label={`Fire at position (${row}, ${col})`}
                     />,
                 );
             }
