@@ -20,9 +20,9 @@ export interface FilmData {
 const cache: Record<string, Promise<FilmData>> = {};
 
 export function Film({ url }: { url: string }) {
-    const [isLoading, setIsLoading] = useState(!cache[url]);
+    const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error>();
-    const [film, setFilm] = useState(cache[url]);
+    const [film, setFilm] = useState<FilmData>();
 
     useEffect(() => {
         if (!cache[url]) {
@@ -59,6 +59,7 @@ export function Film({ url }: { url: string }) {
     if (error) {
         return <div>{error.message}</div>;
     }
-
-    return <div>{film.title}</div>;
+    if (film) {
+        return <div>{film.title}</div>;
+    }
 }
