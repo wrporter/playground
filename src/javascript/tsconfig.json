@@ -1,7 +1,9 @@
 {
   "extends": "@wesp-up/tsconfig/node.json",
   "include": ["**/*", ".*"],
+  "exclude": ["**/build", "coverage"],
   "compilerOptions": {
+    "types": ["vitest/globals"],
     "lib": ["DOM"]
   }
 }

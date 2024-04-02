@@ -1,15 +1,18 @@
 {
   "name": "javascript",
   "private": true,
+  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "start": "tsx"
+    "start": "tsx src/main.ts",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@wesp-up/eslint-config": "^1.0.1",
     "@wesp-up/tsconfig": "^1.0.0",
     "eslint": "8.57.0",
-    "tsx": "4.7.1"
+    "tsx": "4.7.1",
+    "vitest": "1.4.0"
   }
 }
