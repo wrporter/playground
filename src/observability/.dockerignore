@@ -1,0 +1,6 @@
+*
+
+!src/main.js
+!src/otel.cjs
+!package.json
+!package-lock.json

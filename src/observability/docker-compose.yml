@@ -1,0 +1,98 @@
+services:
+  # Tempo runs as user 10001, and docker compose creates the volume as root.
+  # As such, we need to chown the volume in order for Tempo to start correctly.
+  init:
+    image: &tempoImage grafana/tempo:latest
+    user: root
+    entrypoint:
+      - "chown"
+      - "10001:10001"
+      - "/var/tempo"
+    volumes:
+      - ./data/tempo:/var/tempo
+
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - ./config/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+#      - 1888:1888 # pprof extension
+#      - 8888:8888 # Prometheus metrics exposed by the Collector
+#      - 8889:8889 # Prometheus exporter metrics
+#      - 13133:13133 # health_check extension
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP http receiver
+#      - 55679:55679 # zpages extension
+
+  # Logs
+  loki:
+    container_name: loki
+    image: grafana/loki
+    volumes:
+      - ./config/loki.yaml:/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+
+  # Traces
+  tempo:
+    container_name: tempo
+    image: *tempoImage
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml
+      - ./data/tempo:/var/tempo
+    ports:
+#      - "14268:14268"  # jaeger ingest
+      - "3200:3200"   # tempo
+#      - "9095:9095" # tempo grpc
+      - "4417:4417"  # otlp grpc
+      - "4418:4418"  # otlp http
+#      - "9411:9411"   # zipkin
+    depends_on:
+      - init
+
+  # Metrics
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./data/prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    ports:
+      - "9090:9090"
+
+  # Dashboard
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+      - ./config/grafana-datasources:/etc/grafana/provisioning/datasources
+#      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "9797:3000"
+
+  node-server:
+    container_name: node-server
+    build:
+      context: .
+      args:
+        APP: node-server
+    env_file:
+      - .env
+    ports:
+      - '4333:4333'
+      - '22600:22600'
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://host.docker.internal:3100/loki/api/v1/push"

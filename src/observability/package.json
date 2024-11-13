@@ -1,0 +1,15 @@
+{
+  "name": "observability",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env --require=./src/otel.cjs --watch src/main.js"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.52.0",
+    "@opentelemetry/sdk-node": "^0.54.0",
+    "@wesp-up/express": "^3.0.1",
+    "express": "^4.21.1"
+  }
+}
