@@ -33,6 +33,7 @@ services:
       - ./config/loki.yaml:/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
+    stop_grace_period: 500ms
 
   # Traces
   tempo:
@@ -51,6 +52,7 @@ services:
 #      - "9411:9411"   # zipkin
     depends_on:
       - init
+    stop_grace_period: 500ms
 
   # Metrics
   prometheus:
