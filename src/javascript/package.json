@@ -15,5 +15,8 @@
     "eslint": "8.57.0",
     "tsx": "4.7.1",
     "vitest": "1.4.0"
+  },
+  "dependencies": {
+    "effect": "3.17.6"
   }
 }

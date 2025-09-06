@@ -1,0 +1,26 @@
+{
+  "name": "open-telemetry",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx --env-file=.env --import ./src/otel.js --watch src/main.ts"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.52.0",
+    "@opentelemetry/exporter-jaeger": "^1.27.0",
+    "@opentelemetry/instrumentation-express": "^0.44.0",
+    "@opentelemetry/instrumentation-http": "^0.54.0",
+    "@opentelemetry/instrumentation-winston": "^0.41.0",
+    "@opentelemetry/sdk-node": "^0.54.0",
+    "@opentelemetry/sdk-trace-base": "^1.27.0",
+    "@opentelemetry/sdk-trace-node": "^1.27.0",
+    "@opentelemetry/semantic-conventions": "^1.27.0",
+    "@wesp-up/express": "^3.0.1",
+    "@wesp-up/logger": "^1.1.0",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0"
+  }
+}

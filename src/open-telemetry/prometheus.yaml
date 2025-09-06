@@ -1,0 +1,15 @@
+storage:
+  tsdb:
+    # A 10min time window is enough because it can easily absorb retries and network delays.
+    out_of_order_time_window: 10m
+
+global:
+  scrape_interval:     5s
+  evaluation_interval: 5s
+
+rule_files:
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:22600']
